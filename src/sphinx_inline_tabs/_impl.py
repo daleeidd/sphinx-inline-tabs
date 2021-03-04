@@ -66,7 +66,6 @@ class _TabLabel(_GeneralHTMLTagElement):
 class TabDirective(SphinxDirective):
     """Tabbed content in Sphinx documentation."""
 
-    required_arguments = 1  # directive takes a single argument.
     final_argument_whitespace = True  # this allows that argument to contain spaces.
     has_content = True
     option_spec = {
@@ -81,12 +80,14 @@ class TabDirective(SphinxDirective):
         self.set_source_info(container)
 
         # Handle the label (non-plain-text variants allowed)
-        textnodes, messages = self.state.inline_text(self.arguments[0], self.lineno)
-        label = nodes.rubric(self.arguments[0], *textnodes)
+        tab_name = []
+        self.state.nested_parse(self.content[0:1], 0, tab_name)
+        label = tab_name
 
         # Handle the content
         content = nodes.container("", is_div=True, classes=["tab-content"])
-        self.state.nested_parse(self.content, self.content_offset, content)
+        # "2:" skips label and blank space.
+        self.state.nested_parse(self.content[2:], self.content_offset, content)
 
         if not self.env.app.tags.has("no-tabs"):
             container += label
