@@ -86,8 +86,14 @@ class TabDirective(SphinxDirective):
 
         # Handle the content
         content = nodes.container("", is_div=True, classes=["tab-content"])
-        # "2:" skips label and blank space.
-        self.state.nested_parse(self.content[2:], self.content_offset, content)
+        try:
+            # "2:" skips label and blank space.
+            self.state.nested_parse(self.content[2:], self.content_offset, content)
+        except EOFError as error:
+            if f"{error}" == "":
+                print(f"EOFError: Possible false positive due to a tab directive containing an include directive.")
+            else:
+                print(f"EOFError: {error}")
 
         if not self.env.app.tags.has("no-tabs"):
             container += label
