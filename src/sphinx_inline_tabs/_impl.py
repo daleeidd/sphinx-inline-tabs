@@ -88,7 +88,9 @@ class TabDirective(SphinxDirective):
         content = nodes.container("", is_div=True, classes=["tab-content"])
         self.state.nested_parse(self.content, self.content_offset, content)
 
-        container += label
+        if not self.env.app.tags.has("no-tabs"):
+            container += label
+
         container += content
 
         return [container]
