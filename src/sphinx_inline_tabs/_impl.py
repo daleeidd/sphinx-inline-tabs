@@ -119,7 +119,17 @@ def _should_start_new_set(node, current_tab_set):
         return True
 
     parent = node.parent
-    if parent.index(node) - 1 != parent.index(prev_node):
+
+    prev_index = parent.index(node) - 1
+    prev_tab_index = parent.index(prev_node)
+
+    # Ignore comments
+    while prev_index != prev_tab_index:
+        if parent[prev_index].asdom().tagName != "comment":
+            break
+        prev_index -= 1
+
+    if prev_index != prev_tab_index: # Preceding node is not a tab
         return True
 
     # This node should be in the same set, so don't start a new one.
